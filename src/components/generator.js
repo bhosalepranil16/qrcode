@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import QRCode from 'qrcode';
 
-import { Form, Button, Image } from 'react-bootstrap';
+import { Form, Button, Image, Container } from 'react-bootstrap';
 
 const Generator = (props) => {
     const [msg,setMsg] = useState('');
@@ -22,16 +22,19 @@ const Generator = (props) => {
     }
 
     return (
-        <Form>
-            <Form.Group className="p-5">
-                <Form.Label>Enter Your Message</Form.Label>
-                <Form.Control type="text" placeholder="Enter Your text" value={msg} onChange={(e) => { getMessage(e); }}></Form.Control>
-            </Form.Group>
-            <Button variant="outline-primary d-block mx-auto" onClick ={(e) => { generateQR(e); } } >Generate</Button>
-            <a href={imgSrc} download={imgSrc} className=" d-block mx-auto">
-                <Image src={imgSrc} style={{width: 200,height: 200}} />
-            </a>
-        </Form>
+            <Container>
+                <Form> 
+                    <Form.Group className="p-4">
+                        <Form.Label>Enter Your Message</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Your text" value={msg} onChange={(e) => { getMessage(e); }}></Form.Control>
+                    </Form.Group>
+                    <Button variant="outline-primary d-block mx-auto" onClick ={(e) => { generateQR(e); } } >Generate</Button>
+                    <a href={imgSrc} download={imgSrc} className="p-4">
+                        <Image className="d-block mx-auto" src={imgSrc} style={{width: 200,height: 200}} />
+                    </a>
+                    <small className="form-text text-muted text-center">For downloading the Image click on Image.</small>
+                </Form>
+            </Container>
     );
 }
 

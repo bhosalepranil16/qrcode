@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import QrcodeDecoder from 'qrcode-decoder';
 
+import QrCode from 'qrcode-reader';
+import Jimp from 'jimp';
 
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Container } from 'react-bootstrap';
 
 const Reader = (props) => {
     const [buffer,setBuffer] = useState(null);
+    const [result,setResult] = useState('');
 
     const captureFile= (e) => {
         e.preventDefault();
@@ -15,23 +17,37 @@ const Reader = (props) => {
         reader.onloadend = () => {
             setBuffer(Buffer.from(reader.result));
         }
-
     }
 
-    const decode = async (e) => {
-        e.preventDefault();
-        console.log(buffer);
-
+    const decode = async (event) => {
+        try {
+            event.preventDefault();
+            const qr = new QrCode();
+            qr.callback = function(e, value) {
+                if (e) {
+                    window.alert(e.message);
+                }
+                setResult(value.result);
+            };
+            const image = await Jimp.read(buffer);
+            qr.decode(image.bitmap);
+        }
+        catch(err) {
+            window.alert(err.message);
+        }
     }
 
     return(
-        <Form>
-            <Form.Group className="p-5">
-                <Form.Label className="h3">Enter QR Code image</Form.Label>
-                <Form.Control type="file" onChange={(e) => { captureFile(e); }} />
-                <Button variant="primary" onClick={(e) => { decode(e); }}>Click</Button>
-            </Form.Group>
-        </Form>
+        <Container>
+            <Form>
+                <Form.Group className="p-5">
+                    <Form.Label className="h3 p-2">Enter QR Code image</Form.Label>
+                    <Form.Control type="file" className="p-2" onChange={(e) => { captureFile(e); }} />
+                    <Button variant="primary" className="d-block mx-auto p-2" onClick={(e) => { decode(e); }}>Decode</Button>
+                </Form.Group>
+            </Form>
+            <h1 className="text-primary text-center">{result}</h1>
+        </Container>
     );
 }
 
